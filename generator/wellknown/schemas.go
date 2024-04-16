@@ -18,6 +18,8 @@ package wellknown
 import (
 	v3 "github.com/google/gnostic/openapiv3"
 	"google.golang.org/protobuf/reflect/protoreflect"
+	"strconv"
+	"strings"
 )
 
 func NewStringSchema() *v3.SchemaOrReference {
@@ -62,6 +64,17 @@ func NewEnumSchema(enum_type *string, field protoreflect.FieldDescriptor) *v3.Sc
 		}
 	} else {
 		schema.Type = "integer"
+		schema.OneOf = make([]*v3.SchemaOrReference, 0, field.Enum().Values().Len())
+		for i := 0; i < field.Enum().Values().Len(); i++ {
+			valueName := strings.TrimPrefix(string(field.Enum().Values().Get(i).Name()), string(field.Enum().Name()))
+			schema.OneOf = append(schema.OneOf, &v3.SchemaOrReference{
+				Oneof: &v3.SchemaOrReference_Schema{
+					Schema: &v3.Schema{
+						Title: valueName + " = " + strconv.Itoa(int(field.Enum().Values().Get(i).Number())),
+					},
+				},
+			})
+		}
 	}
 	return &v3.SchemaOrReference{
 		Oneof: &v3.SchemaOrReference_Schema{
@@ -168,9 +181,12 @@ func NewGoogleProtobufStructSchema() *v3.SchemaOrReference {
 
 // google.protobuf.Value is handled specially
 // See here for the details on the JSON mapping:
-//   https://developers.google.com/protocol-buffers/docs/proto3#json
+//
+//	https://developers.google.com/protocol-buffers/docs/proto3#json
+//
 // and here:
-//   https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Value
+//
+//	https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Value
 func NewGoogleProtobufValueSchema(name string) *v3.NamedSchemaOrReference {
 	return &v3.NamedSchemaOrReference{
 		Name: name,
@@ -186,7 +202,8 @@ func NewGoogleProtobufValueSchema(name string) *v3.NamedSchemaOrReference {
 
 // google.protobuf.Any is handled specially
 // See here for the details on the JSON mapping:
-//   https://developers.google.com/protocol-buffers/docs/proto3#json
+//
+//	https://developers.google.com/protocol-buffers/docs/proto3#json
 func NewGoogleProtobufAnySchema(name string) *v3.NamedSchemaOrReference {
 	return &v3.NamedSchemaOrReference{
 		Name: name,
