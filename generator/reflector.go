@@ -21,7 +21,7 @@ import (
 
 	"google.golang.org/protobuf/reflect/protoreflect"
 
-	wk "github.com/google/gnostic/cmd/protoc-gen-openapi/generator/wellknown"
+	wk "github.com/biu7/protoc-gen-openapi/generator/wellknown"
 	v3 "github.com/google/gnostic/openapiv3"
 )
 
@@ -152,7 +152,7 @@ func (r *OpenAPIv3Reflector) schemaOrReferenceForMessage(message protoreflect.Me
 
 	case ".google.protobuf.Empty":
 		// Empty is closer to JSON undefined than null, so ignore this field
-		return nil //&v3.SchemaOrReference{Oneof: &v3.SchemaOrReference_Schema{Schema: &v3.Schema{Type: "null"}}}
+		return nil // &v3.SchemaOrReference{Oneof: &v3.SchemaOrReference_Schema{Schema: &v3.Schema{Type: "null"}}}
 
 	case ".google.protobuf.BoolValue":
 		return wk.NewBooleanSchema()
