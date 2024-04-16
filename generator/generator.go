@@ -610,9 +610,9 @@ func (g *OpenAPIv3Generator) buildOperationV3(
 	// Create the operation.
 	op := &v3.Operation{
 		Tags:        []string{tagName},
-		Description: description + "======",
+		Description: description,
 		Summary:     summary,
-		OperationId: operationID + "=--==-=-=-",
+		OperationId: operationID,
 		Parameters:  parameters,
 		Responses:   responses,
 	}
@@ -714,12 +714,11 @@ func (g *OpenAPIv3Generator) addPathsToDocumentV3(d *v3.Document, services []*pr
 		annotationsCount := 0
 
 		for _, method := range service.Methods {
-			comment := g.filterCommentString(method.Comments.Leading) + "sdfkldfhgklhdsfg"
+			comment := g.filterCommentString(method.Comments.Leading)
 			summary := g.findCommentSummary(comment)
-			log.Println("Method: ", method.GoName, "Summary: ", summary, "Comment: ", comment)
 			inputMessage := method.Input
 			outputMessage := method.Output
-			operationID := service.GoName + "_" + method.GoName + "=-=-=-=-="
+			operationID := service.GoName + "_" + method.GoName
 
 			rules := make([]*annotations.HttpRule, 0)
 
